@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% block title %}天天生鲜 - 首页{% endblock title %}
+{% block topfiles %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/slide.js' %}"></script>
+{% endblock topfiles %}
+{# 网页主体内容块 #}
+{% block body %}
+    <div class="navbar_con">
+		<div class="navbar">
+			<h1 class="fl">全部商品分类</h1>
+			<ul class="navlist fl">
+				<li><a href="">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+    <div class="center_con clearfix">
+		<ul class="subnav fl">
+        {# 遍历展示商品分类信息 #}
+            {% for type in types %}
+            <li><a href="#model01" class="{{ type.logo }}">{{type.name  }}</a></li>
+            {% endfor %}
+		</ul>
+		<div class="slide fl">
+            {# 首页轮播图 #}
+			<ul class="slide_pics">
+                {% for foo in indexGoodsBanner %}
+                <li><a href="#"><img src="{{ MEDIA_URL }}{{ foo.image }}" alt="幻灯片"></a></li>
+                {% endfor %}
+			</ul>
+			<div class="prev"></div>
+			<div class="next"></div>
+			<ul class="points"></ul>
+		</div>
+		<div class="adv fl">
+            {# 首页促销活动 #}
+            {% for foo in indexPromotionBanner %}
+            <a href="{{ foo.url }}"><img src="{{ MEDIA_URL }}{{foo.image  }}"></a>
+            {% endfor %}
+		</div>
+	</div>
+     {# 首页分类展示商品 #}
+    {% for category in types %}
+     <div class="list_model">
+
+        <div class="list_title clearfix">
+			<h3 class="fl" id="model01">{{ category.name }}</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+                {% for banner in category.title_banner %}
+                    <a href="#">{{ banner.sku.name }}</a>
+                {% endfor %}
+			</div>
+			<a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
+		</div>
+        <div class="goods_con clearfix">
+
+			<div class="goods_banner fl"><img src="{{ MEDIA_URL }}{{ category.image }}"></div>
+			<ul class="goods_list fl">
+            {# 遍历展示type种类在首页展示的图片商品的信息 #}
+                {% for banner in category.img_banner%}
+                    <li>
+					<h4><a href="#">{{ banner.sku.name }}</a></h4>
+					<a href="#"><img src="{{ MEDIA_URL }}{{ banner.sku.image }}"></a>
+					<div class="prize">¥ {{ banner.sku.price }}</div>
+				    </li>
+                {% endfor %}
+
+
+
+			</ul>
+		</div>
+    </div>
+    {% endfor %}
+
+
+{% endblock body %}
