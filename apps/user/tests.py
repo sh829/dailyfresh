@@ -4,6 +4,7 @@ from celery_tasks import tasks
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from django.conf import settings
 # Create your tests here.
+# thinkpad modify
 class usercase(TestCase):
     def testSendEmail(self):
         info = {'confirm': "123456"}
