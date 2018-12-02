@@ -17,11 +17,12 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
 from django.conf import settings
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^user/', include('apps.user.urls', namespace='user')),  # 用户模块
     url(r'^cart/', include('apps.cart.urls', namespace='cart')),  # 购物车模块
-    url(r'^goods/', include('apps.goods.urls', namespace='goods')),  # 商品模块
+    url(r'^$', include('apps.goods.urls', namespace='goods')),  # 商品模块
     url(r'^order/', include('apps.order.urls', namespace='order')),  # 订单模块
     url(r'^search/', include('haystack.urls')), #搜索引擎url
     url(r'media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
