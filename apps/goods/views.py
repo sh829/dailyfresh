@@ -113,11 +113,11 @@ class DetailView(View):
             conn.ltrim(history_key, 0, 4)
 
             # 组织模板上下文
-            context = {
-                'sku':sku,
-                'types':types,
-                'same_sku_skus':same_spu_skus,
-                'new_skus': new_skus,
-                'cart_count':cart_count,
-            }
+        context = {
+            'sku':sku,
+            'types':types,
+            'same_sku_skus':same_spu_skus,
+            'new_skus': new_skus,
+            'cart_count':cart_count,
+        }
         return render(request,'detail.html',context)
