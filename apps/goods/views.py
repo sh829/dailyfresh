@@ -4,7 +4,10 @@ from django.core.cache import cache
 # Create your views here.
 from django_redis import get_redis_connection
 
-from apps.goods.models import GoodsType, IndexGoodsBanner, IndexPromotionBanner, IndexTypeGoodsBanner
+from apps.goods.models import GoodsType, IndexGoodsBanner\
+    , GoodsSKU, IndexPromotionBanner, IndexTypeGoodsBanner
+
+IndexPromotionBanner, IndexTypeGoodsBanner
 
 
 class IndexView(View):
