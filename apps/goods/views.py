@@ -121,3 +121,5 @@ class DetailView(View):
             'cart_count':cart_count,
         }
         return render(request,'detail.html',context)
+class ListView(View):
+    pass
