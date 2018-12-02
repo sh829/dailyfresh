@@ -5,12 +5,12 @@
     <div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
-		<a href="#">{{ sku.category.name }}</a>
+		<a href="{%  url 'goods:list' sku.category.id 1 %}">{{ sku.category.name }}</a>
 		<span>></span>
 		<a href="#">商品详情</a>
 	</div>
     <div class="goods_detail_con clearfix">
-		<div class="goods_detail_pic fl"><img src="{{ MEDIA_URL }}{{ sku.img }}"></div>
+		<div class="goods_detail_pic fl"><img src="{{ MEDIA_URL }}{{ sku.image }}"></div>
 
 		<div class="goods_detail_list fr">
 			<h3>{{ sku.name }}</h3>
@@ -49,8 +49,8 @@
 				<ul>
                     {% for sku in new_skus %}
                         <li>
-						<a href="#"><img src="{{ MEDIA_URL }}{{ sku.image }}"></a>
-						<h4><a href="{% url 'goods:detail' sku.id %}">{{ sku.name }}</a></h4>
+						<a href="{% url 'goods:detail' sku.id %}"><img src="{{ MEDIA_URL }}{{ sku.image }}"></a>
+                            <h4><a href="{% url 'goods:detail' sku.id %}">{{ sku.name }}</a></h4>
 						<div class="prize">￥{{ sku.price }} 元</div>
 					</li>
                     {% endfor %}

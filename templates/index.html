@@ -24,7 +24,7 @@
 		<ul class="subnav fl">
         {# 遍历展示商品分类信息 #}
             {% for type in types %}
-            <li><a href="#model01" class="{{ type.logo }}">{{type.name  }}</a></li>
+            <li><a href="#model0{{ forloop.counter }}" class="{{ type.logo }}">{{type.name  }}</a></li>
             {% endfor %}
 		</ul>
 		<div class="slide fl">
