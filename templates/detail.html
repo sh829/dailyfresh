@@ -50,7 +50,7 @@
                     {% for sku in new_skus %}
                         <li>
 						<a href="#"><img src="{{ MEDIA_URL }}{{ sku.image }}"></a>
-						<h4><a href="{% url 'good:detail' sku.id %}">{{ sku.name }}</a></h4>
+						<h4><a href="{% url 'goods:detail' sku.id %}">{{ sku.name }}</a></h4>
 						<div class="prize">￥{{ sku.price }} 元</div>
 					</li>
                     {% endfor %}
