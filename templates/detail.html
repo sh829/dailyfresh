@@ -1,23 +1,23 @@
-se_detail_list.html' %}
+{% extends 'base_detail_list.html' %}
 {% block title %}天天生鲜,商品详情{% endblock %}
 {% load static from staticfiles %}
 {% block main_content %}
     <div class="breadcrumb">
 		<a href="#">全部分类</a>
 		<span>></span>
-		<a href="#">新鲜水果</a>
+		<a href="{%  url 'goods:list' sku.category.id 1 %}">{{ sku.category.name }}</a>
 		<span>></span>
 		<a href="#">商品详情</a>
 	</div>
     <div class="goods_detail_con clearfix">
-		<div class="goods_detail_pic fl"><img src="images/goods_detail.jpg"></div>
+		<div class="goods_detail_pic fl"><img src="{{ MEDIA_URL }}{{ sku.image }}"></div>
 
 		<div class="goods_detail_list fr">
-			<h3>大兴大棚草莓</h3>
-			<p>草莓浆果柔软多汁，味美爽口，适合速冻保鲜贮藏。草莓速冻后，可以保持原有的色、香、味，既便于贮藏，又便于外销。</p>
+			<h3>{{ sku.name }}</h3>
+			<p>{{ sku.desc }}</p>
 			<div class="prize_bar">
-				<span class="show_pirze">¥<em>16.80</em></span>
-				<span class="show_unit">单  位：500g</span>
+				<span class="show_pirze">¥<em>{{ sku.price }}</em></span>
+				<span class="show_unit">单  位：{{ sku.unite }}</span>
 			</div>
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
@@ -27,10 +27,18 @@ se_detail_list.html' %}
 					<a href="javascript:;" class="minus fr">-</a>
 				</div>
 			</div>
-			<div class="total">总价：<em>16.80元</em></div>
+            <div>
+                <div>其他规格:</div>
+                <div>
+                    {% for sku in same_spu_skus %}
+                        <a href="{% url 'goods:detail' sku.id %}">{{ sku.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+			<div class="total">总价：<em>{{ sku.price }}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+				<a href="javascript:;" class="add_cart" id="{{ sku.id }}">加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -39,16 +47,14 @@ se_detail_list.html' %}
 			<div class="new_goods">
 				<h3>新品推荐</h3>
 				<ul>
-					<li>
-						<a href="#"><img src="images/goods/goods001.jpg"></a>
-						<h4><a href="#">进口柠檬</a></h4>
-						<div class="prize">￥3.90</div>
+                    {% for sku in new_skus %}
+                        <li>
+						<a href="{% url 'goods:detail' sku.id %}"><img src="{{ MEDIA_URL }}{{ sku.image }}"></a>
+                            <h4><a href="{% url 'goods:detail' sku.id %}">{{ sku.name }}</a></h4>
+						<div class="prize">￥{{ sku.price }} 元</div>
 					</li>
-					<li>
-						<a href="#"><img src="images/goods/goods002.jpg"></a>
-						<h4><a href="#">玫瑰香葡萄</a></h4>
-						<div class="prize">￥16.80</div>
-					</li>
+                    {% endfor %}
+
 				</ul>
 			</div>
 		</div>

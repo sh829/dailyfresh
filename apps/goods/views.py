@@ -3,8 +3,12 @@ from django.views import View
 from django.core.cache import cache
 # Create your views here.
 from django_redis import get_redis_connection
+from django.core.urlresolvers import reverse
 
-from apps.goods.models import GoodsType, IndexGoodsBanner, IndexPromotionBanner, IndexTypeGoodsBanner
+from apps.goods.models import GoodsType, IndexGoodsBanner\
+    , GoodsSKU, IndexPromotionBanner, IndexTypeGoodsBanner
+
+IndexPromotionBanner, IndexTypeGoodsBanner
 
 
 class IndexView(View):
@@ -110,11 +114,93 @@ class DetailView(View):
             conn.ltrim(history_key, 0, 4)
 
             # 组织模板上下文
-            context = {
-                'sku':sku,
-                'types':types,
-                'same_sku_skus':same_spu_skus,
-                'new_skus': new_skus,
-                'cart_count':cart_count,
-            }
-        return render(request,'detail.html',context)
+        context = {
+            'sku':sku,
+            'types':types,
+            'same_sku_skus':same_spu_skus,
+            'new_skus': new_skus,
+            'cart_count':cart_count,
+        }
+        return render(request,'detail.html', context)
+
+# 前端传递的参数：种类id(type_id) 页码(page) 排序方式(sort)
+# 商品列表页的url地址: '/list/种类id/页码?sort=排序方式'
+class ListView(View):
+    def get(self,request, type_id, page):
+        """type_id 为种类id， page为页码"""
+        # 获取种类id对应的商品种类信息,判断是否合法存在
+        try:
+            category = GoodsType.objects.get(id=type_id)
+        except GoodsType.DoesNotExist:
+            # 种类不存在，直接跳转到首页
+            return redirect(reverse('goods:index'))
+        # 获取所有种类
+        types = GoodsType.objects.all()
+        # 获取排序顺序
+        # sort=price: 按照商品的价格(price)从低到高排序
+        # sort=hot: 按照商品的人气(sales)从高到低排序
+        # sort=default: 按照默认排序方式(id)从高到低排序
+        sort = request.GET.get('sort')
+
+        # 获取type种类信息并排序
+        if sort == 'price':
+            skus = GoodsSKU.objects.filter(category=category).order_by('price')
+        elif sort == 'hot':
+            skus = GoodsSKU.objects.filter(category=category).order_by('-sale')
+        else:
+            sort = 'default'
+            skus = GoodsSKU.objects.filter(category=category).order_by('-id')
+
+        #分页操作
+        from django.core.paginator import Paginator
+        paginator = Paginator(skus, 5)
+        #处理页码
+        page = int(page)
+
+        if page > paginator.num_pages:
+            #获取第一页的内容
+            page = 1
+        # 获取第page页内容，返回page类的实例对象
+        skus_page = paginator.page(page)
+        # 页码处理
+        # 如果分页之后页码超过5页，最多在页面上只显示5个页码：当前页前2页，当前页，当前页后2页
+        # 1) 分页页码小于5页，显示全部页码
+        # 2）当前页属于1-3页，显示1-5页
+        # 3) 当前页属于后3页，显示后5页
+        # 4) 其他请求，显示当前页前2页，当前页，当前页后2页
+        num_pages = paginator.num_pages
+        if num_pages < 5:
+            pages = range(1,num_pages+1)
+        elif page <=3:
+            pages = range(1,6)
+        elif num_pages - page <= 2:
+            # num_pages-4, num_pages
+            pages = range(num_pages - 4, num_pages + 1)
+        else:
+            # page-2, page+2
+            pages = range(page - 2, page + 3)
+            # 获取type种类的2个新品信息
+        new_skus = GoodsSKU.objects.filter(category=category).order_by('-create_time')[:2]
+        # 如果用户登录，获取用户购物车中商品的条目数
+        cart_count = 0
+        if request.user.is_authenticated:
+            # 获取redis链接
+            conn = get_redis_connection('default')
+            # 拼接key
+            key = 'cart_%s'% request.user.id
+            # 获取用户购物车中商品的条数
+            # hlen(key) 返回属性数目
+            cart_count = conn.hlen(key)
+
+        # 组织模板上下文
+        context = {
+            'type': category,
+            'types': types,
+            'skus_page': skus_page,
+            'new_skus': new_skus,
+            'cart_count': cart_count,
+            'sort': sort,
+            'pages': pages
+        }
+        # 使用模板
+        return render(request, 'list.html', context)

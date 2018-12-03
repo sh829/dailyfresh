@@ -24,7 +24,7 @@
 		<ul class="subnav fl">
         {# 遍历展示商品分类信息 #}
             {% for type in types %}
-            <li><a href="#model01" class="{{ type.logo }}">{{type.name  }}</a></li>
+            <li><a href="#model0{{ forloop.counter }}" class="{{ type.logo }}">{{type.name  }}</a></li>
             {% endfor %}
 		</ul>
 		<div class="slide fl">
@@ -66,8 +66,8 @@
             {# 遍历展示type种类在首页展示的图片商品的信息 #}
                 {% for banner in category.img_banner%}
                     <li>
-					<h4><a href="#">{{ banner.sku.name }}</a></h4>
-					<a href="#"><img src="{{ MEDIA_URL }}{{ banner.sku.image }}"></a>
+					<h4><a href="{% url 'goods:detail' banner.sku.id %} }">{{ banner.sku.name }}</a></h4>
+					<a href="{% url 'goods:detail' banner.sku.id %}"><img src="{{ MEDIA_URL }}{{ banner.sku.image }}"></a>
 					<div class="prize">¥ {{ banner.sku.price }}</div>
 				    </li>
                 {% endfor %}

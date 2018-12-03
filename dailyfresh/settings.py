@@ -1,3 +1,4 @@
+# -- coding: UTF-8 --
 """
 Django settings for dailyfresh project.
 
@@ -25,7 +26,7 @@ SECRET_KEY = '_7cjwe6dx0sxgnex(ye^qx7nc#@*rn_u#ewrtffg9h0niky7-y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['47.105.159.142']
+ALLOWED_HOSTS = []
 
 
 # Application definition
