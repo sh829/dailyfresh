@@ -1,5 +1,5 @@
 {% extends 'base_detail_list.html' %}
-{% block title %}天天生鲜,商品详情{% endblock %}
+{% block title %}天天生鲜-商品详情{% endblock %}
 {% load static from staticfiles %}
 {% block main_content %}
     <div class="breadcrumb">
@@ -38,7 +38,7 @@
 			<div class="total">总价：<em>{{ sku.price }}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="{{ sku.id }}">加入购物车</a>
+				<a href="javascript:;" class="add_cart" sku_id="{{ sku.id }}" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>
@@ -74,13 +74,68 @@
 
 		</div>
 	</div>
-{% endblock %}
+{% endblock main_content %}
 {% block bottom %}
     	<div class="add_jump"></div>
-{% endblock %}
+{% endblock bottom %}
+
 {% block bottomfiles %}
-<script type="text/javascript" src="js/jquery-1.12.2.js"></script>
+<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
 	<script type="text/javascript">
+     // 计算商品总价
+        function update_sku_amount() {
+            // 获取商品的价格
+            var price = $('.show_pirze').children('em').text();
+            // 获取商品的数量
+            var count = $('.num_show').val();
+            // 计算商品的价格
+            var amount = parseInt(count)*parseFloat(price);
+            // 设置商品总价
+            $('.total').children('em').text(amount.toFixed(2)+'元');
+        }
+
+        // 商品数目的增加
+        $('.add').click(function () {
+            // 获取商品的数目
+            var count = $('.num_show').val();
+            // 加1
+            count = parseInt(count) + 1;
+            // 重新设置
+            $('.num_show').val(count);
+            // 更新商品总价
+            update_sku_amount();
+        });
+
+        // 商品数目的减少
+        $('.minus').click(function () {
+            // 获取商品的数目
+            var count = $('.num_show').val();
+            // 减1
+            count = parseInt(count) - 1;
+            if (count <= 0) {
+                count = 1;
+            }
+            // 重新设置
+            $('.num_show').val(count);
+            // 更新商品总价
+            update_sku_amount();
+        });
+
+        // 商品数目手动输入
+        $('.num_show').blur(function () {
+            // 获取用户输入的商品的数目
+            var count = $('.num_show').val();
+            // 校验数据
+            if (isNaN(count) || count.trim().length==0 || parseInt(count) <= 0){
+                count = 1;
+            }
+            // 重新设置
+            // 1.5
+            count = parseInt(count);
+            $('.num_show').val(count);
+            // 更新商品总价
+            update_sku_amount();
+        })
 		var $add_x = $('#add_cart').offset().top;
 		var $add_y = $('#add_cart').offset().left;
 
@@ -89,15 +144,52 @@
 
 		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 		$('#add_cart').click(function(){
-			$(".add_jump").stop().animate({
-				'left': $to_y+7,
-				'top': $to_x+7},
-				"fast", function() {
-					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
-					});
+			//获取商品ID和数量
+            var sku_id = $(this).attr('sku_id');
+            var count = $('.num_show').val();
 
-			});
+            //发起ajax post请求，访问/cart/add，传递参数：sku_id,count
+            //组织参数
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            var csrftoken = getCookie('csrftoken');
+            var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+            var params = {
+                'sku_id': sku_id,
+                'count': count,
+                'csrfmiddlewaretoken': csrftoken
+            };
+            $.post('/cart/add', params, function (data) {
+                if(data.res==5){
+                    //购物车记录添加成功
+                    $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+                    $(".add_jump").stop().animate({
+                        'left': $to_y+7,
+                        'top': $to_x+7},
+                        "fast", function() {
+                            $(".add_jump").fadeOut('fast',function(){
+                                // 重新设置用户购物车商品的条目数
+                                $('#show_count').html(data.cart_count);
+                            });
+
+                    });
+                }else {
+                    alert('添加失败')
+                }
+            })
 		})
 	</script>
-{% endblock %}
+{% endblock bottomfiles %}

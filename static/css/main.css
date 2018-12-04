@@ -368,7 +368,7 @@ html,body{height:100%}
 .cart_list_td .col08{width:18%;}
 
 .cart_list_td .col02 img{width:100px;height:100px;border:1px solid #ddd;display:block;margin:10px auto 0;}
-.cart_list_td .col03{height:48px;text-align:left;line-height:24px;margin-top:38px;}
+.cart_list_td .col03{height:48px;text-align:left;line-height:24px;margin-top:3px;}
 .cart_list_td .col03 em{color:#999}
 .cart_list_td .col08 a{color:#666}
 

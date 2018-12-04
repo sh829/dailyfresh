@@ -12,7 +12,7 @@
             {# 遍历显示搜索的商品的信息 #}
             {% for item in page %}
             <li>
-                <a href="{% url 'goods:detail' item.object.id %}"><img src="{{ item.object.image.url }}"></a>
+                <a href="{% url 'goods:detail' item.object.id %}"><img src="{{ MEDIA_URL }}{{ item.object.image }}"></a>
                 <h4><a href="{% url 'goods:detail' item.object.id %}">{{ item.object.name }}</a></h4>
                 <div class="operate">
                     <span class="prize">￥{{ item.object.price }}</span>
