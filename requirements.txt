@@ -7,7 +7,7 @@ chardet==3.0.4
 Django==1.8.2
 django-bootstrap3==9.1.0
 django-celery==3.2.2
-django-celery-results==1.0.1
+django-celery-results==2.4.0
 django-haystack==2.7.0
 django-redis==4.7.0
 django-tinymce==2.7.0
